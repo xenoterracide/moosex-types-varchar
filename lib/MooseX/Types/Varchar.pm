@@ -13,15 +13,18 @@ use namespace::clean;
 subtype Varchar,
       as Parameterizable[Str,Int],
       where {
-        my($string, $int) = @_;
+        my ( $string, $int ) = @_;
+
+        return 0 unless defined $string && defined $int;
+
         $int >= length($string) ? 1:0;
       },
       message {
         my ($val, $constraining) = @_;
 
         # for 5.8, probably switch to  $foo //= ''; if 5.10 is an option
-        $val          ||= defined $val          ? $val          : '';
-        $constraining ||= defined $constraining ? $constraining : '';
+        $val          ||= defined $val          ? $val          : 'undef';
+        $constraining ||= defined $constraining ? $constraining : 'undef';
 
         qq{Validation failed for 'MooseX::Types::Varchar[$constraining]' with value "$val"};
       };
